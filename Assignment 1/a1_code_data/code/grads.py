@@ -19,15 +19,22 @@ def foo(x):
     return result
 
 def foo_grad(x):
-    # Your implementation here...
-    print("TODO: Not implemented yet")
+    result = []
+    for x_i in x:
+        grad = 4 * x_i ** 3
+        result.append(grad)
+    return result
 
 def bar(x):
     return np.prod(x)
 
 def bar_grad(x):
-    # Your implementation here...
-    # Hint: This is a bit tricky - what if one of the x[i] is zero?
-    print("TODO: Not implemented yet")
-
-
+    result = []
+    for x_i in x:
+        if x_i == 0:
+            copy = x
+            copy.remove(x_i)
+            result.append(bar(copy))
+        val = bar(x) / x_i
+        result.append(val)
+    return result
