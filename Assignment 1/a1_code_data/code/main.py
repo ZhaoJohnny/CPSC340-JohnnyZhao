@@ -58,8 +58,29 @@ def q5_1():
     names = df.columns.values
 
     # YOUR CODE HERE
-    print("TODO: Not implemented yet")
+    print("mean: " + str(np.mean(X)))
+    print("median: " + str(np.median(X)))
+    print("standard deviation: " + str(np.std(X)))
+    print("minimum: " + str(np.min(X)))
+    print("maximum: " + str(np.max(X)))
+    print("mode: " + str(mode(X)))
 
+    print("5% Quantile: " + str(np.percentile(X, 5)))
+    print("25% Quantile: " + str(np.percentile(X, 25)))
+    print("50% Quantile: " + str(np.percentile(X, 50)))
+    print("75% Quantile: " + str(np.percentile(X, 75)))
+    print("95% Quantile: " + str(np.percentile(X, 95)))
+
+    col_means = X.mean(axis=0)
+    col_vars = X.var(axis=0)
+
+    print("highest mean region: " + str(names[np.argmax(col_means)]))
+    print("lowest mean region: " + str(names[np.argmin(col_means)]))
+    print("highest var region: " + str(names[np.argmax(col_vars)]))
+    print("lowest var region: " + str(names[np.argmin(col_vars)]))
+
+
+q5_1()
 
 @handle("6")
 def q6():
