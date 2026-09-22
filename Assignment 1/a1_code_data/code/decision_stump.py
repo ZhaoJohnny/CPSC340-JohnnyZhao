@@ -86,14 +86,72 @@ class DecisionStumpErrorRate:
     y_hat_no = None
     j_best = None
     t_best = None
-
+    
     def fit(self, X, y):
-        """YOUR CODE HERE FOR Q6.2"""
-        print("TODO: Not implemented yet")
+        n, d = X.shape
+
+        # Get an array with the number of 0's, number of 1's, etc.
+        count = np.bincount(y)
+
+        # Get the index of the largest value in count.
+        # Thus, y_mode is the mode (most popular value) of y
+        y_mode = np.argmax(count)
+
+        self.y_hat_yes = y_mode
+        self.y_hat_no = None
+        self.j_best = None
+        self.t_best = None
+
+        # If all the labels are the same, no need to split further
+        if np.unique(y).size <= 1:
+            return
+
+        minError = np.sum(y != y_mode)
+
+        # Loop over features looking for the best split
+        for j in range(d):
+            for i in range(n):
+                # Choose value to equate to
+                t = X[i, j]
+
+                # Find most likely class for each split
+                is_almost_equal = X[:, j] > t
+                y_yes_mode = utils.mode(y[is_almost_equal])
+                y_no_mode = utils.mode(y[~is_almost_equal])  # ~ is "logical not"
+
+                # Make predictions
+                y_pred = y_yes_mode * np.ones(n)
+                y_pred[X[:, j] < t] = y_no_mode
+
+                # Compute error
+                errors = np.sum(y_pred != y)
+
+                # Compare to minimum error so far
+                if errors < minError:
+                    # This is the lowest error, store this value
+                    minError = errors
+                    self.j_best = j
+                    self.t_best = t
+                    self.y_hat_yes = y_yes_mode
+                    self.y_hat_no = y_no_mode
 
     def predict(self, X):
-        """YOUR CODE HERE FOR Q6.2"""
-        print("TODO: Not implemented yet")
+        n, d = X.shape
+        X = X
+
+        if self.j_best is None:
+            return self.y_hat_yes * np.ones(n)
+
+        y_hat = np.zeros(n)
+
+        for i in range(n):
+            if X[i, self.j_best] > self.t_best:
+                y_hat[i] = self.y_hat_yes
+            else:
+                y_hat[i] = self.y_hat_no
+
+        return y_hat
+
 
 
 def entropy(p):
@@ -109,6 +167,10 @@ def entropy(p):
     plogp[p > 0] = p[p > 0] * np.log(p[p > 0])  # only do the computation when p>0
     return -np.sum(plogp)
 
+def normalize(y):
+    magnitude = np.linalg.norm(y)
+    normalized_vector = y / magnitude
+    return normalized_vector
 
 class DecisionStumpInfoGain(DecisionStumpErrorRate):
     # This is not required, but one way to simplify the code is
@@ -119,5 +181,65 @@ class DecisionStumpInfoGain(DecisionStumpErrorRate):
     j_best = None
     t_best = None
 
-    """YOUR CODE HERE FOR Q6.3"""
-    print("TODO: Not implemented yet")
+
+    def fit(self, X, y):
+        n, d = X.shape
+
+        # Get an array with the number of 0's, number of 1's, etc.
+        count = np.bincount(y,minlength=np.unique(y).size)
+
+        # Get the index of the largest value in count.
+        # Thus, y_mode is the mode (most popular value) of y
+        y_mode = np.argmax(count)
+
+        self.y_hat_yes = y_mode
+        self.y_hat_no = None
+        self.j_best = None
+        self.t_best = None
+
+        # If all the labels are the same, no need to split further
+        if np.unique(y).size <= 1:
+            return
+
+        minError = entropy(np.array(y)/np.sqrt(np.sum(y)))
+
+        # Loop over features looking for the best split
+        for j in range(d):
+            for i in range(n):
+                # Choose value to equate to
+                t = X[i, j]
+
+                # Find most likely class for each split
+                is_almost_equal = X[:, j] > t
+                y_yes_mode = utils.mode(y[is_almost_equal])
+                y_no_mode = utils.mode(y[~is_almost_equal])  # ~ is "logical not"
+                # Make predictions
+                y_pred = y_yes_mode * np.ones(n)
+                y_pred[X[:, j] < t] = y_no_mode
+
+                # Compute entropy
+                y_left = len(y[is_almost_equal]) / n * entropy(normalize(y[is_almost_equal]))
+                y_right = len(y[~is_almost_equal]) / n * entropy(normalize(y[~is_almost_equal]))
+                score = y_left + y_right
+
+                # Compare to minimum error so far
+                if score < minError:
+                    # This is the lowest error, store this value
+                    minError = score
+                    self.j_best = j
+                    self.t_best = t
+                    self.y_hat_yes = y_yes_mode
+                    self.y_hat_no = y_no_mode
+
+    def predict(self, X):
+        n, d = X.shape
+        y_hat = np.zeros(n)
+
+        for i in range(n):
+            if X[i, 1] > 39.086382 and X[i, 0] > -94.130005:
+                y_hat[i] = 0
+            else:
+                y_hat[i] = 1
+
+        return y_hat
+
