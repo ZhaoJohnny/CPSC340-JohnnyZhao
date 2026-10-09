@@ -60,8 +60,52 @@ def q2():
     y_test = dataset["ytest"]
 
     ks = list(range(1, 30, 4))
-    """YOUR CODE HERE FOR Q2"""
-    raise NotImplementedError()
+    n_folds = 10
+    fold_length = len(X) / n_folds
+
+    cv_accs = []
+    test_accs = []
+
+    for k in ks:
+        fold_accs = []
+        for i in range(n_folds):
+            start = int(i * fold_length)
+            end = int((i + 1) * fold_length)
+
+            X_validate = X[start:end, :]
+            y_validate = y[start:end]
+            X_train = np.delete(X, range(start, end), axis=0)
+            y_train = np.delete(y, range(start, end), axis=0)
+
+            model = KNN(k)
+            model.fit(X_train, y_train)
+            fold_accs.append(np.mean(model.predict(X_validate) == y_validate))
+        cv_accs.append(np.mean(fold_accs))
+
+        # test accuracy: train on ALL training data, evaluate on the test set
+        model = KNN(k)
+        model.fit(X, y)
+        test_accs.append(np.mean(model.predict(X_test) == y_test))
+
+    print("ks:       ", ks)
+    print("CV accs:  ", cv_accs)
+    print("Test accs:", test_accs)
+
+    plt.figure()
+    plt.plot(ks, cv_accs, marker="o", label="Cross-validation accuracy")
+    plt.plot(ks, test_accs, marker="s", label="Test accuracy")
+    plt.xlabel("k (number of neighbours)")
+    plt.ylabel("Accuracy")
+    plt.title("KNN on ccdebt: CV vs. test accuracy")
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+
+    fname = Path("..", "figs", "q2_cv_vs_test.png")
+    fname.parent.mkdir(exist_ok=True)
+    plt.savefig(fname)
+    plt.show()
+    
+
 
 
 
