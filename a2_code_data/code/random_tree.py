@@ -1,6 +1,7 @@
 from random_stump import RandomStumpInfoGain
 from decision_tree import DecisionTree
 import numpy as np
+from scipy import stats 
 
 import utils
 
@@ -27,15 +28,24 @@ class RandomForest:
     Hint: you can instantiate objects inside fit().
     Make sure predict() is able to handle multiple examples.
     """
-
+    
     def __init__(self, num_trees, max_depth):
-        raise NotImplementedError()
-
-
+        self.num_trees = num_trees
+        self.max_depth = max_depth
+        self.trees = []
+    
     def fit(self, X, y):
-        raise NotImplementedError()
-
-
+        for tree in range(self.num_trees):
+            tree = RandomTree(max_depth=self.max_depth)
+    
+            tree.fit(X, y)
+            self.trees.append(tree)
+    
+    
     def predict(self, X_pred):
-        raise NotImplementedError()
-
+        predictions = np.zeros((len(X_pred), self.num_trees))
+        
+        for i, tree in enumerate(self.trees):
+            predictions[:, i] = tree.predict(X_pred)
+        
+        return stats.mode(predictions, axis=1).mode.squeeze()
