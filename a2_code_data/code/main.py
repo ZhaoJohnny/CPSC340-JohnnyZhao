@@ -250,8 +250,30 @@ def q5_1():
 def q5_2():
     X = load_dataset("clusterData.pkl")["X"]
 
-    """YOUR CODE HERE FOR Q5.2"""
-    raise NotImplementedError()
+    ks = list(range(1, 11))
+    min_errors = []
+
+    for k in ks:
+        best_error = np.inf
+        for _ in range(50):
+            model = Kmeans(k=k)
+            model.fit(X)
+            err = model.error(X, model.predict(X), model.means)
+            best_error = min(best_error, err)
+        min_errors.append(best_error)
+
+    print("Min errors:", min_errors)
+
+    plt.figure()
+    plt.plot(ks, min_errors, marker="o")
+    plt.xlabel("k (number of clusters)")
+    plt.ylabel("Minimum error over 50 initializations")
+    plt.title("k-means error vs. k")
+    plt.grid(True, alpha=0.3)
+    fname = Path("..", "figs", "kmeans_elbow.png")
+    fname.parent.mkdir(exist_ok=True)
+    plt.savefig(fname)
+    plt.show()
 
 
 
