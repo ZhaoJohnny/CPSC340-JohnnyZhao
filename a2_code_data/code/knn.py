@@ -6,7 +6,7 @@ import numpy as np
 
 import utils
 from utils import euclidean_dist_squared
-
+from scipy import stats 
 
 class KNN:
     X = None
@@ -20,6 +20,13 @@ class KNN:
         self.y = y
 
     def predict(self, X_hat):
-        """YOUR CODE HERE FOR Q1"""
-        raise NotImplementedError()
-
+        dist = euclidean_dist_squared(X_hat, self.X)
+    
+        nearest_indices = np.argsort(abs(dist))[:, :self.k]
+    
+        nearest_neighbor = self.y[nearest_indices]
+    
+        common_label = stats.mode(nearest_neighbor, axis=1) # from scipy import stats 
+        predictions = common_label.mode.squeeze()
+        
+        return np.array(predictions)

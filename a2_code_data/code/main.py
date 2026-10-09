@@ -32,8 +32,22 @@ def q1():
     X_test = dataset["Xtest"]
     y_test = dataset["ytest"]
 
-    """YOUR CODE HERE FOR Q1. Also modify knn.py to implement KNN predict."""
-    raise NotImplementedError()
+    k = 1
+    model = KNN(k)
+    model.fit(X, y)
+
+    y_pred_train = model.predict(X)
+    train_error = np.mean(y_pred_train != y)
+
+    y_pred_test = model.predict(X_test)
+    test_error = np.mean(y_pred_test != y_test)
+
+    print(f"k={k}: train error = {train_error:.3f}, test error = {test_error:.3f}")
+
+    plot_classifier(model, X, y)
+    fname = Path("..", "figs", f"q1_k{k}.png")
+    plt.savefig(fname)
+    plt.close()
 
 
 
