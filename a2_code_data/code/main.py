@@ -221,8 +221,28 @@ def q5():
 def q5_1():
     X = load_dataset("clusterData.pkl")["X"]
 
-    """YOUR CODE HERE FOR Q5.1. Also modify kmeans.py/Kmeans"""
-    raise NotImplementedError()
+    best_error = np.inf
+    best_model = None
+
+    for _ in range(50):
+        model = Kmeans(k=4)
+        model.fit(X)
+        y = model.predict(X)  # nearest-mean index for each example
+        err = model.error(X, y, model.means)
+
+        if err < best_error:
+            best_error = err
+            best_model = model
+
+    print(f"Lowest error over 50 runs: {best_error:.3f}")
+
+    plt.figure()
+    plot_classifier(best_model, X, best_model.predict(X))
+    plt.title(f"Best k-means clustering (k=4), error = {best_error:.1f}")
+    fname = Path("..", "figs", "kmeans_best.png")
+    fname.parent.mkdir(exist_ok=True)
+    plt.savefig(fname)
+    plt.show()
 
 
 
