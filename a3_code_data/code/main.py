@@ -43,9 +43,13 @@ def q2_1():
     data = load_dataset("outliersData.pkl")
     X = data["X"]
     y = data["y"].squeeze(1)
-
-    """YOUR CODE FOR Q2.1"""
-    raise NotImplementedError()
+    model = WeightedLeastSquares()
+    weights = [1] * 400 + [0.1] * 100
+    model.fit(X, y, weights)
+    print(model.w)
+    test_and_plot(
+        model, X, y, title="Weighted Least Squares", filename="W_least_squares.pdf"
+    )
 
 
 @handle("2.4")

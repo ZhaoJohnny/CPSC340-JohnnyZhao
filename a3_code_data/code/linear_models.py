@@ -15,8 +15,7 @@ class LeastSquares:
 class WeightedLeastSquares(LeastSquares):
     # inherits the predict() function from LeastSquares
     def fit(self, X, y, v):
-        """YOUR CODE HERE FOR Q2.1"""
-        raise NotImplementedError()
+        self.w = solve(v * X.T @ X, v * X.T @ y)
 
 
 class LinearModel:
