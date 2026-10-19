@@ -83,6 +83,14 @@ class RobustRegressionLoss(FunObj):
         # potentially reshaping our arguments
         w = ensure_1d(w)
         y = ensure_1d(y)
-
-        """YOUR CODE HERE FOR Q2.3"""
-        raise NotImplementedError()
+        y_hat = X @ w
+        v_1 = y_hat - y
+        v_2 = y - y_hat
+        f = np.sum(np.log(np.exp(v_1)+np.exp(v_2)))      
+        
+        top = np.exp(v_1)-np.exp(v_2)
+        bottom = np.exp(v_1)+np.exp(v_2)
+        result = np.divide(top,bottom)
+        g = X.T @ result
+        
+        return f, g

@@ -80,9 +80,19 @@ def q2_4_1():
     X = data["X"]
     y = data["y"].squeeze(1)
 
-    """YOUR CODE HERE FOR Q2.4.1"""
-    # TODO: Finish RobustRegressionLoss in fun_obj.py.
-    raise NotImplementedError()
+    fun_obj = RobustRegressionLoss()
+    optimizer = GradientDescentLineSearch(max_evals=100, verbose=False)
+    model = LinearModel(fun_obj, optimizer)
+    model.fit(X, y)
+    print(model.w)
+    
+    test_and_plot(
+        model,
+        X,
+        y,
+        title="Robust Regression with Gradient Descent",
+        filename="robust_least_squares_gd.pdf",
+    )
 
 
 @handle("2.4.2")
