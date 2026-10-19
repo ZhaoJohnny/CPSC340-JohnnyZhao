@@ -104,7 +104,7 @@ class LinearModel:
 
 class LeastSquaresBias:
     "Least Squares with a bias added"
-    
+
     def fit(self, X, y):
         X_Bias = np.pad(X, ((0, 0), (1, 0)), mode='constant', constant_values=1)
         self.w = solve(X_Bias.T @ X_Bias, X_Bias.T @ y)
@@ -122,16 +122,13 @@ class LeastSquaresPoly:
         self.p = p
 
     def fit(self, X, y):
-        """YOUR CODE HERE FOR Q3.2"""
-        raise NotImplementedError()
+        self.leastSquares.fit(self._poly_basis(X),y)
 
     def predict(self, X_pred):
-        """YOUR CODE HERE FOR Q3.2"""
-        raise NotImplementedError()
+        return self.leastSquares.predict(self._poly_basis(X_pred))
 
     # A private helper function to transform any X with d=1 into
     # the polynomial basis defined by this class at initialization.
     # Returns the matrix Z that is the polynomial basis of X.
     def _poly_basis(self, X):
-        """YOUR CODE HERE FOR Q3.2"""
-        raise NotImplementedError()
+        return np.column_stack([X**i for i in range(self.p + 1)])
