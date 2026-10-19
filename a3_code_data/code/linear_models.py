@@ -102,17 +102,16 @@ class LinearModel:
         """
         return X @ self.w
 
-
 class LeastSquaresBias:
     "Least Squares with a bias added"
-
+    
     def fit(self, X, y):
-        """YOUR CODE HERE FOR Q3.1"""
-        raise NotImplementedError()
+        X_Bias = np.pad(X, ((0, 0), (1, 0)), mode='constant', constant_values=1)
+        self.w = solve(X_Bias.T @ X_Bias, X_Bias.T @ y)
 
     def predict(self, X_pred):
-        """YOUR CODE HERE FOR Q3.1"""
-        raise NotImplementedError()
+        X_pred_Bias = np.pad(X_pred, ((0, 0), (1, 0)), mode='constant', constant_values=1)
+        return X_pred_Bias @ self.w
 
 
 class LeastSquaresPoly:
