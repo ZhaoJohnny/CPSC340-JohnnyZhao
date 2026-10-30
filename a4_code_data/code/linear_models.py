@@ -133,13 +133,16 @@ class LinearClassifierForwardSel(LinearClassifier):
 
                 selected_with_j = selected.copy()
                 selected_with_j[j] = True
-
-                """YOUR CODE HERE FOR Q2.3"""
-                # TODO: Fit the model with 'j' added to the features,
-                # then compute the loss and update the min_loss/best_feature.
-                # Also update self.total_evals.
-                pass
-
+        
+                X_sel=np.compress(selected_with_j,X,axis=1)
+                w = np.zeros(np.sum(selected_with_j))
+                w,fs,gs,ws=self.optimize(w,X_sel,y)
+                f,g = self.global_loss_fn.evaluate(w,X_sel,y)
+                
+                if f<min_loss:
+                    min_loss = f
+                    best_feature = j
+                    self.total_evals=self.total_evals+1
             if min_loss < old_loss:  # something in the loop helped our model
                 selected[best_feature] = True
                 print(f"adding feature {best_feature:>3} - loss {min_loss:>7.3f}")

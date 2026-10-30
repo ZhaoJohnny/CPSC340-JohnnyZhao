@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 from scipy.optimize.optimize import approx_fprime
 
@@ -123,8 +125,17 @@ class LogisticRegressionLossL2(LogisticRegressionLoss):
         w = ensure_1d(w)
         y = ensure_1d(y)
 
-        """YOUR CODE HERE FOR Q2.1"""
-        pass
+        Xw = X @ w
+        yXw = y * Xw  # element-wise multiply; the y_i are in {-1, 1}
+        
+        L= math.sqrt(sum(i ** 2 for i in w))
+        L2=L**2
+        # Calculate the function value
+        f = np.sum(np.log(1 + np.exp(-yXw)))+(self.lammy/2)*L2
+        s = -y / (1 + np.exp(yXw))
+        gt = X.T @ s
+        g = gt + self.lammy*w
+        return f, g
 
 
 class LogisticRegressionLossL0(FunObj):
